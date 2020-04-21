@@ -17,3 +17,16 @@ const bodyParser = (req, res, next) => {
         next();
     }
 };
+
+
+
+Module Exports:
+
+//how other files would look like, by adding the 'new' and ('users.json'), system will know to only follow this instance instead of a new repo
+//const UsersRepository = require('./users');
+//const repo = new UsersRepository('users.json');    
+
+//if we did the new and ('users.json'), other files will look like this:
+//const repo = require('./users');
+//repo.getAll();
+//get.getOne();

@@ -5,7 +5,7 @@ const Repository = require('./repository');
 
 const scrypt = util.promisify(crypto.scrypt);
 
-class UsersRepository extends Repository{
+class UsersRepository extends Repository {
     async comparePasswords(saved, supplied) {
         //saved -> password saved in our db. 'hashed.salt'
         //supplied -> password given to us by a user trying to sign in

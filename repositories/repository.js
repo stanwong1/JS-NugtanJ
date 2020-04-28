@@ -1,9 +1,5 @@
 const fs = require('fs');
 const crypto = require('crypto');
-const util = require('util');
-const Repository = require('./repository');
-
-const scrypt = util.promisify(crypto.scrypt);
 
 module.exports = class Repository {
     constructor(filename) {
@@ -15,14 +11,14 @@ module.exports = class Repository {
         try {
             fs.accessSync(this.filename);
         } catch (err) {
-            fs.writeFileSync(this.filename, '[]')
-
+            fs.writeFileSync(this.filename, '[]');
         }
     }
+
     async create(attrs) {
         attrs.id = this.randomId();
 
-        const records = await this.getAll(); 
+        const records = await this.getAll();
         records.push(attrs);
         await this.writeAll(records);
 
@@ -36,19 +32,12 @@ module.exports = class Repository {
             })
         );
     }
-    async comparePasswords(saved, supplied) {
-        //saved -> password saved in our db. 'hashed.salt'
-        //supplied -> password given to us by a user trying to sign in
-
-        //destructure the array and pull out first element and assign to hash and second element to salt 
-        const [hashed, salt] = saved.split('.');
-        const hashedSuppliedBuf = await scrypt(supplied, salt, 64);
-
-        return hashed === hashedSuppliedBuf.toString('hex');
-    }
 
     async writeAll(records) {
-        await fs.promises.writeFile(this.filename, JSON.stringify(records, null, 2));
+        await fs.promises.writeFile(
+            this.filename,
+            JSON.stringify(records, null, 2)
+        );
     }
 
     randomId() {
@@ -71,15 +60,13 @@ module.exports = class Repository {
         const record = records.find(record => record.id === id);
 
         if (!record) {
-            throw new Error(`Record with id ${id} is not found`);
+            throw new Error(`Record with id ${id} not found`);
         }
-        //copies everything from attrs and assigns it to record
+
         Object.assign(record, attrs);
         await this.writeAll(records);
     }
 
-    //getOneBy test: const user = await repo.getOneBy({ email: "rexxieboy@yahoo.com" });
-    //note: use object notation
     async getOneBy(filters) {
         const records = await this.getAll();
 
@@ -91,9 +78,10 @@ module.exports = class Repository {
                     found = false;
                 }
             }
+
             if (found) {
                 return record;
             }
         }
     }
-}
+};
